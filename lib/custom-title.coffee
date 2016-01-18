@@ -39,16 +39,22 @@ module.exports =
 
 		atom.workspace.updateWindowTitle = ->
 			if template
-				projectPath = atom.project.getPaths()[0]
-				projectName = if projectPath then path.basename(projectPath) else null
-
 				item = atom.workspace.getActivePaneItem()
 
 				fileName = item?.getTitle?() ? 'untitled'
 				filePath = item?.getPath?()
 				fileInProject = false
 
-				repo = atom.project.getRepositories()[0]
+				projectIdx = 0
+				for i in [0..atom.project.getPaths().length - 1]
+					if item?.getPath?().startsWith(atom.project.getPaths()[i])
+						projectIdx = i
+						break
+
+				projectPath = atom.project.getPaths()[projectIdx]
+				projectName = if projectPath then path.basename(projectPath) else null
+
+				repo = atom.project.getRepositories()[projectIdx]
 				gitHead = repo?.getShortHead()
 
 				gitAdded = null
