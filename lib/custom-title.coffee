@@ -47,7 +47,8 @@ module.exports =
 
 				projectIdx = 0
 				for i in [0..atom.project.getPaths().length - 1]
-					if item?.getPath?().startsWith(atom.project.getPaths()[i])
+					itemPath = item?.getPath?()
+					if itemPath && itemPath.startsWith(atom.project.getPaths()[i])
 						projectIdx = i
 						break
 
