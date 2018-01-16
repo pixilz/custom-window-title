@@ -45,15 +45,16 @@ module.exports =
 				filePath = item?.getPath?()
 				fileInProject = false
 
-				projectIdx = 0
+				projectIdx = -1
 				for i in [0..atom.project.getPaths().length - 1]
 					itemPath = item?.getPath?()
 					if itemPath && itemPath.startsWith(atom.project.getPaths()[i])
 						projectIdx = i
 						break
 
-				projectPath = atom.project.getPaths()[projectIdx]
+				projectPath = if projectIdx isnt -1 then atom.project.getPaths()[projectIdx] else null
 				projectName = if projectPath then path.basename(projectPath) else null
+
 
 				repo = atom.project.getRepositories()[projectIdx]
 				gitHead = repo?.getShortHead()
