@@ -6,8 +6,9 @@ Set your own template for Atom's title bar. Uses [underscore.js templates](http:
 
 The following variables are available:
 
-- `projectPath` (Path to root project directory)
-- `projectName` (Directory name of project or title from [Project Manager](https://atom.io/packages/project-manager))
+- `projectPath` (Path to project of open file)
+- `projectName` (Directory name of project of open file)
+- `projectManagerTitle` (Title from [Project Manager](https://atom.io/packages/project-manager))
 - `filePath` (Path to current file)
 - `fileInProject` (Boolean)
 - `relativeFilePath` (Path to file relative to current project)
