@@ -11,6 +11,7 @@ module.exports =
 
 	subscriptions: null
 	configSub: null
+	project: null
 
 	activate: (state) ->
 		_ = require 'underscore'
@@ -18,12 +19,14 @@ module.exports =
 		path = require 'path'
 		{CompositeDisposable} = require 'event-kit'
 
+		os = require 'os'
+
 		@subscriptions = new CompositeDisposable
 
 		template = null
 
-		@configSub = atom.config.observe 'custom-title.template', ->
-			templateString = atom.config.get('custom-title.template')
+		@configSub = atom.config.observe 'custom-window-title.template', ->
+			templateString = atom.config.get('custom-window-title.template')
 
 			if templateString
 				try
@@ -37,8 +40,13 @@ module.exports =
 
 		_updateWindowTitle = atom.workspace.updateWindowTitle
 
-		atom.workspace.updateWindowTitle = ->
+		atom.workspace.updateWindowTitle = =>
 			if template
+				projectPath = atom.project.getPaths()[0]
+				projectName = if projectPath then path.basename(projectPath) else null
+				if @project
+					projectName = @project.props.title
+
 				item = atom.workspace.getActivePaneItem()
 
 				fileName = item?.getTitle?() ? 'untitled'
@@ -66,6 +74,9 @@ module.exports =
 				devMode = atom.inDevMode()
 				safeMode = atom.inSafeMode?()
 
+				hostname = os.hostname()
+				username = os.userInfo().username
+
 				if filePath and repo
 					status = repo.getCachedPathStatus(filePath)
 					if repo.isStatusModified(status)
@@ -89,7 +100,7 @@ module.exports =
 						projectPath, projectName, fileInProject,
 						filePath, relativeFilePath, fileName,
 						gitHead, gitAdded, gitDeleted
-						devMode, safeMode
+						devMode, safeMode, hostname, username
 					}
 
 					if filePath or projectPath
@@ -109,6 +120,11 @@ module.exports =
 
 			@subscriptions.add editorSubscriptions
 
+	consumeProjectManager: ({getProject}) ->
+		getProject (project) =>
+			if project
+				@project = project
+				atom.workspace.updateWindowTitle()
 
 	deactivate: ->
 		@subscriptions?.dispose()
